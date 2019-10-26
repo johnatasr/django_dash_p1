@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}Home{% endblock %}
+    {% load plotly_dash %}
+{% block content %}
+
+        <h1>Teste Home</h1>
+        <div class="{% plotly_class name='SimpleExample' %} card " style=" height: 100%; width: 100%;">
+            {% plotly_app name='SimpleExample' ratio=0.45 %}
+        </div>
+        <br>
+        {{ dash2 | safe }}
+
+
+{% endblock %}
