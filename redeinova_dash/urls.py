@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('portal.urls', namespace='portal')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
+    path('conta/', include('usuarios.urls', namespace='conta')),
 ]

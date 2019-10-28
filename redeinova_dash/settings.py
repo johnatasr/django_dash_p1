@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'portal.apps.PortalConfig',
+    'usuarios.apps.UsuariosConfig',
 
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'dpd_static_support',
@@ -204,4 +205,6 @@ STATICFILES_LOCATION = 'static'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'redeinova_dash/static')
 ]
+
+AUTHENTICATION_BACKENDS = ['path.to.auth.module.EmailBackend']
 
