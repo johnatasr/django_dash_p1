@@ -29,7 +29,6 @@ app.layout = html.Div([
 
 def display_value(value):
 
-
     x = []
     for i in range(value):
         x.append(i)
