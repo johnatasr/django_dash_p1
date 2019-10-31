@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}Mapa USA{% endblock %}
+    {% load plotly_dash %}
+{% block heading %}{% endblock %}
+{% block content %}
+
+        <h1>Mapa USA</h1>
+        <div class="row">
+            <div class="col">
+                {{ plot_usa | safe }}
+            </div>
+        </div>
+
+{% endblock %}

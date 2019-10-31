@@ -3,7 +3,9 @@ import plotly.graph_objs as go
 from plotly.offline import plot
 import numpy as np
 import pandas as pd
-
+import json
+from urllib.request import urlopen
+from django.views import View
 
 
 def home(request):
@@ -69,3 +71,48 @@ def painel(request):
 
     return render(request, template_name, context)
 
+
+def usa_painel(request):
+
+    def painel():
+
+        with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
+            contador = json.load(response)
+
+        df = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/fips-unemp-16.csv",
+                         dtype={"fips": str})
+
+        fig = go.Figure(go.Choroplethmapbox(geojson=contador, locations=df.fips, z=df.unemp,
+                                            colorscale="Viridis", zmin=0, zmax=12,
+                                            marker_opacity=0.5, marker_line_width=0))
+        fig.update_layout(mapbox_style="carto-positron",
+                          mapbox_zoom=3, mapbox_center={"lat": 37.0902, "lon": -95.7129})
+        fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
+
+        # layout = go.layout(title='USA')
+
+        plot_fig = plot(fig, output_type='div', include_plotlyjs=True)
+
+        return plot_fig
+
+    template_name = 'portal/usa.html'
+
+    context ={
+        'plot_usa': painel
+    }
+
+    return render(request, template_name, context)
+
+
+class Chip(View):
+
+    def create(self):
+        pass
+
+
+    def update(self):
+        pass
+
+    def delete(self):
+        pass
