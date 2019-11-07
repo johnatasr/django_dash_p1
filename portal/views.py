@@ -105,6 +105,9 @@ def usa_painel(request):
     return render(request, template_name, context)
 
 
+def wifi_view(request):
+    return render(request, 'portal/wifi.html')
+
 class Chip(View):
 
     def create(self):

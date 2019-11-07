@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+import pyodbc
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'mediar.apps.MediarConfig',
     'portal.apps.PortalConfig',
     'usuarios.apps.UsuariosConfig',
 
@@ -101,9 +102,19 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
-    }
-}
+   },
 
+    'BaseMediar': {
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'PortalMediar',
+        'USER': 'sa',
+        'PASSWORD': 'jm#srv@1!v2',
+        'HOST': '10.177.51.52\\biws.PortalMediar',
+        'OPTIONS': {
+             'host_is_server': True
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

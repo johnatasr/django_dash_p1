@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}Home{% endblock %}
+    {% load plotly_dash %}
+{% block content %}
+
+        <h1>Pontos de Wifi</h1>
+        <div class="row">
+            <div class="{% plotly_class name='wifinyc' %} card " style=" height: 50%; width: 70%;">
+                {% plotly_app name='wifinyc' ratio=0.45 %}
+            </div>
+        </div>
+{% endblock %}

@@ -4,24 +4,28 @@ import dash_html_components as html
 import dash_table_experiments as dt
 import pandas as pd
 
+
+from django_plotly_dash import DjangoDash
 from plotly import graph_objs as go
 from plotly.graph_objs import *
-from dash.dependencies import Input, Output, State, Event
+from dash.dependencies import Input, Output
 
+path = "https://raw.githubusercontent.com/johnatasr/Data/master/NYC_Wi-Fi_Hotspot_Locations.csv"
+css = 'https://codepen.io/amyoshino/pen/jzXypZ.css'
 
-app = dash.Dash(__name__)
-server = app.server
-app.title = 'NYC Wi-Fi Hotspots'
+app = DjangoDash('wifinyc', add_bootstrap_links=css)
+# app = dash.Dash()
+# server = app.server
+app.title = 'Pontos de Wifi de Nova York'
 
+mapbox_access_token = 'pk.eyJ1Ijoiam9obmF0YXNyIiwiYSI6ImNrMmY3d2poYzBoYnAzY28wYmg1MjkwMnMifQ.BGIBMbj5heJP-sRpzvL7rQ'
+map_data = pd.read_csv(path)
 
-mapbox_access_token = 'USE YOUR MAPBOX KEY HERE'
-map_data = pd.read_csv("nyc-wi-fi-hotspot-locations.csv")
-
-# Selecting only required columns
+# Selecione as colunas
 map_data = map_data[["Borough", "Type", "Provider", "Name", "Location", "Latitude", "Longitude"]].drop_duplicates()
 
 # Boostrap CSS.
-app.css.append_css({'external_url': 'https://codepen.io/amyoshino/pen/jzXypZ.css'})
+app.css.append_css({'external_url': css})
 
 #  Layouts
 layout_table = dict(
@@ -72,17 +76,15 @@ layout_map = dict(
 
 # functions
 def gen_map(map_data):
-    # groupby returns a dictionary mapping the values of the first field
-    # 'classification' onto a list of record dictionaries with that
-    # classification value.
+
     return {
         "data": [{
                 "type": "scattermapbox",
                 "lat": list(map_data['Latitude']),
                 "lon": list(map_data['Longitude']),
                 "hoverinfo": "text",
-                "hovertext": [["Name: {} <br>Type: {} <br>Provider: {}".format(i,j,k)]
-                                for i,j,k in zip(map_data['Name'], map_data['Type'],map_data['Provider'])],
+                "hovertext": [["Nome: {} <br>Tipo: {} <br>Provisor: {}".format(i, j, k)]
+                                for i, j, k in zip(map_data['Name'], map_data['Type'], map_data['Provider'])],
                 "mode": "markers",
                 "name": list(map_data['Name']),
                 "marker": {
@@ -97,10 +99,10 @@ app.layout = html.Div(
     html.Div([
         html.Div(
             [
-                html.H1(children='Maps and Tables',
+                html.H1(children='Mapas e Tabelas',
                         className='nine columns'),
                 html.Img(
-                    src="https://www.fulcrumanalytics.com/wp-content/uploads/2017/12/cropped-site-logo-1.png",
+                    src="",
                     className='three columns',
                     style={
                         'height': '16%',
@@ -111,22 +113,19 @@ app.layout = html.Div(
                         'padding-right': 0
                     },
                 ),
-                html.Div(children='''
-                        Dash Tutorial video 04: Working with tables and maps.
-                        ''',
+                html.Div(children='Culuna Teste',
                         className='nine columns'
                 )
             ], className="row"
         ),
 
-        # Selectors
         html.Div(
             [
                 html.Div(
                     [
-                        html.P('Choose Borroughs:'),
+                        html.P('Escolhas os Bairros:'),
                         dcc.Checklist(
-                                id = 'boroughs',
+                                id='boroughs',
                                 options=[
                                     {'label': 'Manhattan', 'value': 'MN'},
                                     {'label': 'Bronx', 'value': 'BX'},
@@ -134,7 +133,7 @@ app.layout = html.Div(
                                     {'label': 'Brooklyn', 'value': 'BK'},
                                     {'label': 'Staten Island', 'value': 'SI'}
                                 ],
-                                values=['MN', 'BX', "QU",  'BK', 'SI'],
+                                value=['MN', 'BX', "QU",  'BK', 'SI'],
                                 labelStyle={'display': 'inline-block'}
                         ),
                     ],
@@ -146,7 +145,7 @@ app.layout = html.Div(
                         html.P('Type:'),
                         dcc.Dropdown(
                             id='type',
-                            options= [{'label': str(item),
+                            options=[{'label': str(item),
                                                   'value': str(item)}
                                                  for item in set(map_data['Type'])],
                             multi=True,
@@ -181,7 +180,7 @@ app.layout = html.Div(
                             selected_row_indices=[],
                             id='datatable'),
                     ],
-                    style = layout_table,
+                    style=layout_table,
                     className="six columns"
                 ),
                 html.Div([
@@ -190,13 +189,6 @@ app.layout = html.Div(
                         )
                     ], className= 'twelve columns'
                     ),
-                html.Div(
-                    [
-                        html.P('Developed by Adriano M. Yoshino - ', style = {'display': 'inline'}),
-                        html.A('amyoshino@nyu.edu', href = 'mailto:amyoshino@nyu.edu')
-                    ], className = "twelve columns",
-                       style = {'fontSize': 18, 'padding-top': 20}
-                )
             ], className="row"
         )
     ], className='ten columns offset-by-one'))
@@ -215,14 +207,14 @@ def map_selection(rows, selected_row_indices):
 @app.callback(
     Output('datatable', 'rows'),
     [Input('type', 'value'),
-     Input('boroughs', 'values')])
-def update_selected_row_indices(type, borough):
+     Input('boroughs', 'value')])
+def update_selected_row_indices(tipo, bairro):
     map_aux = map_data.copy()
 
     # Type filter
-    map_aux = map_aux[map_aux['Type'].isin(type)]
+    map_aux = map_aux[map_aux['Type'].isin(tipo)]
     # Boroughs filter
-    map_aux = map_aux[map_aux["Borough"].isin(borough)]
+    map_aux = map_aux[map_aux["Borough"].isin(bairro)]
 
     rows = map_aux.to_dict('records')
     return rows
@@ -262,3 +254,7 @@ def update_figure(rows, selected_row_indices):
      ])
 
     return go.Figure(data=data, layout=layout)
+
+#
+# if __name__ == '__main__':
+#     app.run_server()

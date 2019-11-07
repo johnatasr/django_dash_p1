@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('portal.urls', namespace='portal')),
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('conta/', include('usuarios.urls', namespace='conta')),
+    path('mediar/', include('mediar.urls', namespace='mediar')),
 ]
